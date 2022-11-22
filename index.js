@@ -1,4 +1,5 @@
 const fs = require("fs");
+const axios = require("axios");
 const path = require("path");
 
 const searchOnDirectory = (passedPath) => {
@@ -39,20 +40,54 @@ const readAndValidate = (passedPath) => {
     fs.readFile(passedPath, "utf8", (err, data) => {
       if (err) reject(err);
       const links = data.match(/\[(.*?)\]\((.*?)\)/g);
-      const splitByBrackets = links.map((link) => link.split("]("));
-
-      const formatedData = splitByBrackets.map((link) => ({
-        href: link[1],
-        text: link[0],
-        file: passedPath,
-      }));
-      resolve(formatedData);
+      const linksArray = [];
+      for (let link of links) {
+        const linkText = link.match(/\[(.*?)\]/)[1];
+        const linkHref = link.match(/\((.*?)\)/)[1];
+        linksArray.push({
+          href: linkHref,
+          text: linkText,
+          file: passedPath,
+        });
+      }
+      resolve(linksArray);
     });
   });
 };
 
-const mdLinks = (passedPath) => {
-  return searchOnDirectory(passedPath);
+const validateLinks = (links) => {
+  let promises = [];
+  const axiosPromises = links.map((link) => {
+    promises.push(
+      new Promise((resolve, reject) => {
+        axios
+          .get(link.href)
+          .then((response) => {
+            link.status = response.status;
+            link.statusText = response.statusText;
+            resolve(link);
+          })
+          .catch(() => {
+            link.statusText = "Fail";
+            link.error = "404";
+            resolve(link);
+          });
+      })
+    );
+  });
+  return Promise.all(promises);
+};
+
+const mdLinks = (passedPath, validate) => {
+  if (validate) {
+    if (validate.validate == true) {
+      return searchOnDirectory(passedPath).then((links) =>
+        validateLinks(links)
+      );
+    }
+  } else {
+    return searchOnDirectory(passedPath);
+  }
 };
 
 module.exports = {
