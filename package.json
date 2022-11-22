@@ -1,6 +1,6 @@
 {
   "name": "@teddiechim/md-links",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Be able to find all the links in a file and validate them",
   "engines": {
     "node": ">=14.x"
