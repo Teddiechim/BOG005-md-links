@@ -6,6 +6,9 @@ const searchOnDirectory = (passedPath) => {
   return new Promise((resolve, reject) => {
     let promises = [];
     fs.readdir(passedPath, (err, files) => {
+      if (err) {
+        throw err;
+      }
       if (path.extname(passedPath) === ".md") {
         readAndValidate(passedPath).then((data) => {
           resolve(data);
@@ -19,9 +22,13 @@ const searchOnDirectory = (passedPath) => {
                   resolve(data);
                 });
               } else {
-                searchOnDirectory(passedPath + "/" + file).then((data) => {
-                  resolve(data);
-                });
+                searchOnDirectory(passedPath + "/" + file)
+                  .then((data) => {
+                    resolve(data);
+                  })
+                  .catch((err) => {
+                    throw err;
+                  });
               }
             })
           );
@@ -81,12 +88,16 @@ const validateLinks = (links) => {
 const mdLinks = (passedPath, validate) => {
   if (validate) {
     if (validate.validate == true) {
-      return searchOnDirectory(passedPath).then((links) =>
-        validateLinks(links)
-      );
+      return searchOnDirectory(passedPath)
+        .then((links) => validateLinks(links))
+        .catch((error) => {
+          throw error;
+        });
     }
   } else {
-    return searchOnDirectory(passedPath);
+    return searchOnDirectory(passedPath).catch((error) => {
+      throw error;
+    });
   }
 };
 
