@@ -7,7 +7,8 @@ const searchOnDirectory = (passedPath) => {
     let promises = [];
     fs.readdir(passedPath, (err, files) => {
       if (err) {
-        throw err;
+        reject("Invalid path");
+        return;
       }
       if (path.extname(passedPath) === ".md") {
         readAndValidate(passedPath).then((data) => {

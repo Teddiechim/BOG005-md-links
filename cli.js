@@ -13,17 +13,18 @@ figlet("Welcome to md-links!", function (err, data) {
   }
 
   console.log(data);
-  log(
-    chalk.white.bgGreen.bold(
-      "To use md-links insert a valid path of the directory you want to read"
-    )
-  );
+  initCLI();
+});
 
+const initCLI = () => {
+  // const [, , ...args] = process.argv;
+  // const path = args[0];
+  // const options = args[1];
   inquirer
     .prompt([
       {
         name: "path",
-        message: "Insert a validate path",
+        message: "Insert a validate path: ",
       },
     ])
     .then((answers) => {
@@ -48,62 +49,8 @@ figlet("Welcome to md-links!", function (err, data) {
           );
         })
         .catch((error) => {
-          console.log(chalk.white.bgRed.bold("invalid path"));
+          console.log(chalk.white.bgRed.bold("Invalid path"));
+          initCLI();
         });
-    })
-    .catch((error) => {
-      console.log(chalk.white.bgRed.bold("invalid path"));
     });
-
-  // inquirer
-  //   .prompt([
-  //     {
-  //       type: "list",
-  //       name: "Nombre",
-  //       message: "Do you want to see some of our options?",
-  //       choices: ["Validate", "Stats", "Validate and Stats"],
-  //     },
-  //   ])
-  //   .then((answers) => {
-  //     mdLinks(answers.path).then((data) => console.log(data));
-  //   })
-  //   .catch((error) => {
-  //     if (error.isTtyError) {
-  //     }
-  //   });
-});
-
-// const argv = process.argv;
-// const route = process.argv[2];
-
-// const cli = (route, argv) => {
-//   if (route === undefined) {
-//     console.log("Ingresa una ruta válida");
-//   } else if (argv.includes("--validate")) {
-//     mdLinks("./archivos", { validate: true }).then((data) => console.log(data));
-//   }
-// };
-
-// cli(route, argv);
-
-// mdLinks("./archivos", { validate: true }).then((data) => console.log(data));
-
-// console.log(`Hello world ${args}`);
-
-// inquirer
-//   .prompt([
-//     {
-//       type: "list",
-//       name: "Nombre",
-//       message: "¿Cuál color favorito?",
-//       // default: "Sin nombre",
-//       choices: ["red", "blue", "pink"],
-//     },
-//   ])
-//   .then((answers) => {
-//     console.log("answer: ", answers);
-//   })
-//   .catch((error) => {
-//     if (error.isTtyError) {
-//     }
-//   });
+};
