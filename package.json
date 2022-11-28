@@ -1,6 +1,9 @@
 {
   "name": "@teddiechim/md-links",
   "version": "1.0.4",
+  "jest": {
+    "verbose": true
+  },
   "description": "Be able to find all the links in a file and validate them",
   "engines": {
     "node": ">=14.x"
@@ -20,6 +23,10 @@
     "inquirer": "^8.0.0"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "jest --verbose --coverage"
+  },
+  "devDependencies": {
+    "jest": "^29.3.1"
   }
 }
