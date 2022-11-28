@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const inquirer = require("inquirer");
-const { mdLinks } = require("./index.js");
+const { mdLinks, stats, brokenLinks } = require("./index.js");
 const chalk = require("chalk");
 const figlet = require("figlet");
 const log = console.log;
@@ -11,15 +11,48 @@ figlet("Welcome to md-links!", function (err, data) {
     console.dir(err);
     return;
   }
-
   console.log(data);
+  log(
+    chalk.white.bgGreen.bold(
+      "To use md-links insert a valid path of the directory you want to read"
+    )
+  );
+
   initCLI();
 });
 
+const options = () => {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "choice",
+        message: "Options",
+        choices: ["Validate", "Stats", "Validate and Stats"],
+      },
+    ])
+    .then((answers) => {
+      if (answers.choice == "Validate") {
+        mdLinks("./archivos", { validate: true }).then((data) =>
+          console.log(data)
+        );
+      } else if (answers.choice == "Stats") {
+        mdLinks("./archivos", { validate: true }).then((data) =>
+          console.table(stats(data))
+        );
+      } else if (answers.choice == "Validate and Stats") {
+        mdLinks("./archivos", { validate: true }).then((data) =>
+          console.table(brokenLinks(data))
+        );
+      }
+    })
+    .catch((error) => {
+      if (error.isTtyError) {
+      }
+    });
+};
+
 const initCLI = () => {
-  // const [, , ...args] = process.argv;
-  // const path = args[0];
-  // const options = args[1];
   inquirer
     .prompt([
       {
@@ -47,6 +80,7 @@ const initCLI = () => {
                 "to get statistics that need validation results."
               )
           );
+          options();
         })
         .catch((error) => {
           console.log(chalk.white.bgRed.bold("Invalid path"));

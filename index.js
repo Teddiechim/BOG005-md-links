@@ -86,6 +86,20 @@ const validateLinks = (links) => {
   return Promise.all(promises);
 };
 
+const stats = (links) => {
+  const total = links.length;
+  const hrefs = links.map((link) => link.href);
+  const uniqueLinksObject = new Set(hrefs);
+  const uniqueLinks = [...uniqueLinksObject].length;
+  return { Total: total, Unique: uniqueLinks };
+};
+
+const brokenLinks = (links) => {
+  const statss = stats(links);
+  const linksArray = links.filter((link) => link.statusText == "Fail");
+  return { ...statss, broken: linksArray.length };
+};
+
 const mdLinks = (passedPath, validate) => {
   if (validate) {
     if (validate.validate == true) {
@@ -104,4 +118,6 @@ const mdLinks = (passedPath, validate) => {
 
 module.exports = {
   mdLinks,
+  stats,
+  brokenLinks,
 };
