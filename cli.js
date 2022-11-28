@@ -33,17 +33,20 @@ const options = () => {
     ])
     .then((answers) => {
       if (answers.choice == "Validate") {
-        mdLinks("./archivos", { validate: true }).then((data) =>
-          console.log(data)
-        );
+        mdLinks("./archivos", { validate: true }).then((data) => {
+          console.log(data);
+          options();
+        });
       } else if (answers.choice == "Stats") {
-        mdLinks("./archivos", { validate: true }).then((data) =>
-          console.table(stats(data))
-        );
+        mdLinks("./archivos", { validate: true }).then((data) => {
+          console.table(stats(data));
+          options();
+        });
       } else if (answers.choice == "Validate and Stats") {
-        mdLinks("./archivos", { validate: true }).then((data) =>
-          console.table(brokenLinks(data))
-        );
+        mdLinks("./archivos", { validate: true }).then((data) => {
+          console.table(brokenLinks(data));
+          options();
+        });
       }
     })
     .catch((error) => {
